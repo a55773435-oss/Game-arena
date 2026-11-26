@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#090b18"><title>GAME ARENA 3.0</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script type="module" src="https://unpkg.com/@google/model-viewer@4.0.0/dist/model-viewer.min.js"></script>
+  <link rel="stylesheet" href="/static/style.css?v=3.0.0">
+</head>
+<body>
+  <div id="loading" class="loading"><div class="logo-orb">GA</div><b>GAME ARENA 3.0</b><span>در حال ورود به میدان...</span></div>
+  <section id="joinGate" class="join-gate hidden">
+    <div class="join-card"><div class="logo-orb">GA</div><span class="eyebrow">GAME ARENA ACCESS</span><h1>عضویت در کانال لازم است</h1><p>برای ورود به بازی‌ها، ابتدا عضو کانال زیر شو.</p><b id="joinGateTitle">کانال رسمی GAME ARENA</b><a id="joinLink" class="join-link" href="https://t.me/" target="_blank" rel="noopener">عضویت در کانال ↗</a><p id="joinGateMessage" class="helper">بعد از عضویت، دکمه بررسی را بزن.</p><button id="joinCheckBtn" class="primary-btn" onclick="checkJoinStatus()">بررسی عضویت</button></div>
+  </section>
+  <main id="app" class="hidden">
+    <div id="previewNotice" class="preview-notice hidden">پیش‌نمایش نمایشی · برای بازی و ذخیره اطلاعات، مینی‌اپ را از داخل تلگرام باز کن.</div>
+    <header class="topbar">
+      <div><div class="eyebrow">WELCOME TO THE ARENA</div><h1>سلام <span id="helloName">قهرمان</span> ⚡</h1><p>امروز وقت رکورد زدنه.</p></div>
+      <div class="avatar" id="avatar">GA</div>
+    </header>
+    <section class="hero-card">
+      <div class="hero-top"><span class="pill" id="league">🪵 Wood</span><span class="season">EMPIRE EDITION · SEASONAL LADDER</span></div>
+      <div class="hero-label">سطح <b id="level">۱</b> · امتیاز تجربه (XP)</div><div class="xp-line"><strong id="xp">0</strong><span>XP</span></div>
+      <div class="progress"><i id="xpBar"></i></div><div class="progress-caption"><span id="nextLeague">تا لیگ بعدی</span><span id="xpLeft">75 XP</span></div>
+      <div class="hero-stats"><div><b id="wins">0</b><small>برد</small></div><div><b id="games">0</b><small>بازی</small></div><div><b id="streak">0 🔥</b><small>روز متوالی</small></div></div>
+      <div class="wallet-strip"><span>🪙 موجودی سکه</span><b id="coins">۱۰۰</b></div>
+    </section>
+
+    <section id="homeTab" class="tab-panel">
+      <div class="section-head"><div><span class="eyebrow">PLAY & WIN</span><h2>میدان بازی</h2></div><span class="tiny-tag">۱۰ بازی</span></div>
+      <div class="game-grid">
+        <button class="game-card math" onclick="startMath()"><span class="game-icon">🧮</span><b>نبرد ریاضی</b><small>سرعت و دقت</small></button>
+        <button class="game-card ttt" onclick="startTTT()"><span class="game-icon">❌⭕</span><b>دوز هوشمند</b><small>تو در برابر ربات</small></button>
+        <button class="game-card penalty" onclick="openSports('penalty')"><span class="game-icon">⚽</span><b>ضربه پنالتی</b><small>دروازه‌بان رو گول بزن</small></button>
+        <button class="game-card basket" onclick="openSports('basketball')"><span class="game-icon">🏀</span><b>بسکتبال</b><small>پرتاب به سمت حلقه</small></button>
+        <button class="game-card volley" onclick="openSports('volleyball')"><span class="game-icon">🏐</span><b>والیبال</b><small>سرویس، اسپک و دفاع</small></button>
+        <button class="game-card guess" onclick="startGuess()"><span class="game-icon">🔢</span><b>حدس عدد</b><small>۷ تلاش برای کشف عدد</small></button>
+        <button class="game-card memory" onclick="startMemory()"><span class="game-icon">🧩</span><b>حافظه نئون</b><small>۱۶ کارت · ۸ جفت را پیدا کن</small></button>
+        <button class="game-card breakout" onclick="startNeonBreakout()"><span class="game-icon">💠</span><b>NEON BREAKOUT</b><small>آرکید دوبعدی؛ توپ را کنترل کن و آجرها را بشکن</small></button>
+        <button class="game-card space" onclick="startArcade('space-shooter')"><span class="game-icon">🚀</span><b>SPACE SHOOTER</b><small>آرکید فضایی؛ جاخالی بده و هدف‌ها را بزن</small></button>
+        <button class="game-card drift" onclick="startArcade('neon-drift')"><span class="game-icon">🏎️</span><b>NEON DRIFT</b><small>مسیر نئونی؛ از موانع عبور کن</small></button>
+      </div>
+      <div class="section-head spaced"><div><span class="eyebrow">SEASONAL EVENTS</span><h2>🎉 رویدادهای جاری</h2></div><span class="tiny-tag" id="seasonBadge">SEASON 03</span></div>
+      <div id="eventList" class="stack-list"></div>
+      <div class="section-head spaced"><div><span class="eyebrow">DAILY MISSIONS</span><h2>ماموریت‌های امروز</h2></div><span class="tiny-tag">هر روز تازه</span></div>
+      <div id="missions" class="mission-list"></div>
+      <div class="daily-card"><div class="daily-emoji">🎁</div><div><b>جایزه روزانه</b><small>هر روز برگرد و XP رایگان بگیر.</small></div><button id="dailyBtn" onclick="claimDaily()">دریافت</button></div>
+      <div class="wheel-card"><div class="wheel-main"><div class="wheel-disc-wrap"><div class="wheel-pointer"></div><div class="wheel-disc" id="wheelDisc"><span>🎰</span></div></div><div><b>گردونه شانس</b><small id="wheelInfo">یک چرخش رایگان روزانه</small></div></div><button id="wheelButton" onclick="spinWheel()">چرخش رایگان</button></div>
+    </section>
+
+    <section id="competitionTab" class="tab-panel hidden">
+      <div class="section-head"><div><span class="eyebrow">COMPETE</span><h2>رقابت و قهرمانی</h2></div></div>
+      <div class="period-tabs"><button class="active" onclick="loadLeaderboard('all',this)">همه</button><button onclick="loadLeaderboard('week',this)">هفتگی</button><button onclick="loadLeaderboard('month',this)">ماهانه</button><button onclick="loadLeaderboard('season',this)">فصل</button></div>
+      <div class="rank-summary"><span>رتبه تو</span><b id="myRank">—</b></div><div id="leaderboard" class="leaderboard"></div>
+      <div class="empire-grid">
+        <div class="panel-card season-hub"><div class="section-head"><div><span class="eyebrow">SEASON CHAMPIONSHIP</span><h2>🏆 فصل رقابتی</h2></div><b class="tiny-tag" id="seasonCountdown">—</b></div><b id="seasonName">در حال بارگذاری فصل...</b><div class="season-score"><strong id="seasonMyScore">۰</strong><small>امتیاز فصل تو</small></div><div id="seasonLeaders" class="stack-list"></div><div id="seasonRewards" class="season-rewards"></div></div>
+        <div class="panel-card live-arena"><div class="section-head"><div><span class="eyebrow">LIVE ARENA</span><h2>⚔️ مسابقه زنده</h2></div><span class="tiny-tag" id="arenaOnline">آنلاین —</span></div><p class="helper">برای نبرد ریاضی با یک بازیکن دیگر وارد صف شو. سیستم به‌صورت خودکار حریف پیدا می‌کند.</p><button class="primary-btn" onclick="joinLiveArena()">پیدا کردن حریف</button><button class="secondary-btn" onclick="cancelLiveArena()">لغو جست‌وجو</button><div id="liveArenaStatus" class="stack-list"><p class="helper">هنوز وارد صف نشده‌ای.</p></div></div>
+      </div>
+      <div class="section-head spaced"><div><span class="eyebrow">ARENA SOCIAL FEED</span><h2>🌐 اتفاقات میدان</h2></div></div><div id="arenaFeed" class="stack-list"></div>
+      <div class="section-head spaced"><div><span class="eyebrow">NOTIFICATION CENTER</span><h2>🔔 اعلان‌ها</h2></div></div><div id="notificationList" class="stack-list"></div>
+      <div class="section-head spaced"><div><span class="eyebrow">GLOBAL LOBBY</span><h2>💬 لابی عمومی</h2></div><button class="tiny-tag" onclick="loadGlobalChat()">تازه‌سازی</button></div><div class="panel-card"><div id="globalChatMessages" class="global-chat-messages"></div><div class="global-chat-compose"><input id="globalChatInput" maxlength="300" placeholder="پیام عمومی کوتاه..." onkeydown="if(event.key==='Enter')sendGlobalChat()"><button onclick="sendGlobalChat()">ارسال</button></div><p class="helper">پیام‌ها عمومی‌اند. از ابزار گزارش و مسدودسازی برای مدیریت ارتباطات استفاده کن.</p></div>
+      <div class="section-head spaced"><div><span class="eyebrow">CLAN SYSTEM</span><h2>👥 کلن‌ها</h2></div></div>
+      <div id="myClan" class="panel-card">هنوز عضو کلنی نیستی.</div>
+      <div class="inline-form"><input id="clanName" maxlength="40" placeholder="نام کلن جدید"><input id="clanDescription" maxlength="300" placeholder="توضیح کوتاه"><button onclick="createClan()">ساخت کلن</button></div>
+      <div id="clanList" class="stack-list"></div>
+      <div class="section-head spaced"><div><span class="eyebrow">CLAN WARS</span><h2>⚔️ نبرد کلنی‌ها</h2></div></div>
+      <div id="clanBattleList" class="stack-list"></div>
+      <div class="panel-card"><div class="section-head"><div><span class="eyebrow">CLAN ECONOMY</span><h2>🏦 خزانه و قلمرو کلن</h2></div><b id="clanTreasury">—</b></div><div class="inline-form"><input id="clanDepositAmount" type="number" min="1" max="5000" value="100" placeholder="مقدار واریز سکه"><button onclick="depositClanTreasury()">واریز به خزانه</button></div><div id="clanTerritories" class="territory-grid"></div></div>
+      <div class="clan-chat-note"><b>💬 چت کلن داخل خود ربات تلگرام</b><p>به چت خصوصی ربات برو و دستور <code>/clanchat</code> را بفرست. پیام‌ها برای اعضای کلنت ارسال می‌شود؛ با <code>/exit</code> خارج شو.</p></div>
+      <div class="section-head spaced"><div><span class="eyebrow">SOCIAL ARENA</span><h2>👥 دوستان و ارتباطات</h2></div></div>
+      <div class="inline-form"><input id="friendAddId" inputmode="numeric" placeholder="شناسه عددی برای افزودن دوست"><button onclick="sendFriendRequest()">ارسال درخواست دوستی</button></div>
+      <div id="friendList" class="stack-list"></div><div id="friendRequests" class="stack-list"></div>
+      <div class="panel-card"><div class="section-head"><div><span class="eyebrow">PLAYER SAFETY</span><h2>🛡️ امنیت و گزارش</h2></div></div><div class="inline-form"><input id="safetyUserId" inputmode="numeric" placeholder="شناسه عددی بازیکن"><select id="reportReason"><option value="other">سایر</option><option value="harassment">رفتار آزاردهنده</option><option value="spam">هرزنامه</option><option value="cheating">تقلب</option><option value="impersonation">جعل هویت</option></select><input id="reportDetails" maxlength="500" placeholder="توضیح گزارش (اختیاری)"><div class="admin-two"><button onclick="blockSafetyUser()">مسدودکردن</button><button class="secondary-btn" onclick="reportSafetyUser()">ارسال گزارش</button></div></div><div id="blockedUsers" class="stack-list"></div></div>
+      <div class="clan-chat-note"><b>💬 گفت‌وگوی خصوصی و چت کلن در خود ربات</b><p>برای فهرست دوستان <code>/friends</code> · افزودن دوست <code>/friend شناسه</code> · شروع گفت‌وگو با دوست تأییدشده <code>/dm شناسه</code> · پایان گفتگو <code>/enddm</code> · چت کلن <code>/clanchat</code> · خروج <code>/exit</code></p></div>
+      <div class="section-head spaced"><div><span class="eyebrow">FRIEND DUELS</span><h2>⚔️ چالش دوستان</h2></div></div>
+      <div class="inline-form"><input id="friendId" inputmode="numeric" placeholder="شناسه عددی دوست"><select id="friendGame"><option value="math">نبرد ریاضی</option><option value="guess">حدس عدد</option><option value="memory">حافظه</option></select><button onclick="sendFriendChallenge()">دعوت</button></div>
+      <div id="friendChallenges" class="stack-list"></div>
+      <div class="section-head spaced"><div><span class="eyebrow">TOURNAMENTS</span><h2>🎉 تورنمنت‌ها</h2></div></div>
+      <div id="tournamentList" class="stack-list"></div>
+    </section>
+
+    <section id="shopTab" class="tab-panel hidden">
+      <div class="section-head"><div><span class="eyebrow">ARENA MARKET</span><h2>🎁 فروشگاه</h2></div><span class="tiny-tag">خرید با سکه</span></div>
+      <div class="shop-balance">🪙 موجودی فعلی <b id="shopCoins">۰</b></div>
+      <div id="shopProducts" class="shop-grid"></div>
+      <div class="section-head spaced"><div><span class="eyebrow">YOUR COLLECTION</span><h2>🎒 کوله‌پشتی</h2></div></div>
+      <div id="inventoryList" class="stack-list"></div>
+    </section>
+
+    <section id="profileTab" class="tab-panel hidden">
+      <div class="section-head"><div><span class="eyebrow">PLAYER CARD</span><h2>پروفایل بازیکن</h2></div></div>
+      <div class="profile-card"><div class="profile-avatar" id="profileAvatar">GA</div><h2 id="profileName">قهرمان</h2><div id="profileVipBadge" class="profile-equipped-badge"></div><div id="profileEquippedBadge" class="profile-equipped-badge"></div><p id="profileLeague">🪵 Wood</p><div class="profile-id" id="profileIdentity">ID: —</div><div id="profileCharacterStage" class="character-stage hidden"></div><div class="profile-grid"><div><b id="pGames">0</b><small>بازی</small></div><div><b id="pWins">0</b><small>برد</small></div><div><b id="pLosses">0</b><small>باخت</small></div><div><b id="pRate">0%</b><small>درصد برد</small></div><div><b id="pXP">0</b><small>XP کل</small></div></div></div>
+      <div class="profile-cosmetics-card"><div class="section-head"><div><span class="eyebrow">YOUR STYLE</span><h2>✨ ظاهر پروفایل</h2></div></div><div id="profileCosmetics" class="stack-list"><p class="helper">آیتم‌ها از کوله‌پشتی انتخاب می‌شوند.</p></div><div class="character-upload-panel"><b>🧍 کاراکتر سه‌بعدی شخصی</b><p>مدل سه‌بعدی واقعی با فرمت GLB تا ۱۶ مگابایت یا رندر تصویری PNG/JPG/WEBP آپلود کن. مدل GLB قابل چرخش و زوم است. برای مالک، مدل شخصی جایگزین فرمانروای پیش‌فرض روی تخت می‌شود؛ با حذف آن، فرمانروا برمی‌گردد.</p><input id="customCharacterFile" type="file" accept=".glb,model/gltf-binary,application/octet-stream,image/png,image/jpeg,image/webp"><div class="admin-two"><button onclick="uploadMyCharacter()">ثبت کاراکتر من</button><button class="secondary-btn" onclick="removeMyCharacter()">حذف کاراکتر شخصی</button></div></div><div id="profileGiftShowcase" class="gift-collection"></div><div id="profileShowcase" class="profile-showcase"></div></div>
+      <div class="invite-card"><div><b>دوستت رو به آرنا دعوت کن</b><small>با دعوت دوست‌ها، ۲۵ XP جایزه بگیر.</small></div><button onclick="shareInvite()">دعوت دوست ↗</button></div>
+      <div class="section-head spaced"><div><span class="eyebrow">BADGES</span><h2>🏅 دستاوردها</h2></div></div><div id="achievementList" class="stack-list"></div>
+      <div class="section-head spaced"><div><span class="eyebrow">MATCH LOG</span><h2>تاریخچه مسابقات</h2></div></div><div id="matchHistory" class="stack-list"></div>
+      <div id="adminBox" class="admin-card hidden">
+        <div class="admin-heading"><div><b>👑 پنل مدیریت GAME ARENA</b><p>ابزارهای مدیریتی فقط برای مدیر اصلی</p></div><span>ADMIN</span></div>
+        <div id="adminStats" class="admin-stats">—</div>
+        <div class="admin-section"><b>🎁 ایجاد محصول و بسته جایزه</b><input id="productName" placeholder="نام محصول"><textarea id="productDesc" placeholder="توضیحات محصول"></textarea><div class="admin-two"><select id="productCategory"><option value="character">کاراکتر سه‌بعدی پروفایل</option><option value="frame">قاب دور عکس</option><option value="badge">نشان</option><option value="gift">گیفت جایزه‌ای</option><option value="pack">بسته جایزه (فقط مالک)</option><option value="item">آیتم جایزه‌ای (فقط مالک)</option></select><select id="productRarity"><option value="common">معمولی</option><option value="rare">کمیاب</option><option value="epic">حماسی</option><option value="legendary">افسانه‌ای</option></select></div><input id="productPrice" type="number" min="0" placeholder="قیمت فروشگاه؛ برای آیتم/بسته/گیفت صفر"><label class="toggle-row"><span>فقط جایزه مالک باشد و در فروشگاه فروخته نشود (آیتم/گیفت/بسته همیشه اختصاصی‌اند)</span><input id="productRewardOnly" type="checkbox"></label><textarea id="productBundleItems" placeholder="محتویات بسته: شناسه‌محصول:تعداد، مثل 12:1, 15:2"></textarea><label class="helper">برای کاراکتر، تصویر رندر سه‌بعدی تمام‌قد با پس‌زمینه سفید آپلود کن؛ در پروفایل داخل سکوی سفید و جدا از عکس تلگرام نمایش داده می‌شود.</label><input id="productImage" type="file" accept="image/png,image/jpeg,image/webp"><button class="admin-action" onclick="adminCreateProduct()">افزودن محصول</button><div id="adminProducts" class="stack-list"></div></div>
+        <div class="admin-section"><b>🎖️ اعطای جایزه / بسته به کاربر</b><div class="admin-two"><input id="grantUserId" inputmode="numeric" placeholder="شناسه عددی کاربر"><input id="grantProductId" inputmode="numeric" placeholder="شناسه محصول/بسته"></div><input id="grantQuantity" type="number" min="1" max="100" value="1" placeholder="تعداد"><p class="helper">آیتم، گیفت و بسته فقط از همین بخش توسط مالک اعطا می‌شوند؛ کاربران امکان خرید یا دیدن دفتر کل تراکنش‌ها را ندارند. کاربر نمی‌تواند آن‌ها را از فروشگاه بخرد.</p><button class="admin-action" onclick="adminGrantReward()">اعطای جایزه</button></div>
+        <div class="admin-section"><b>🧾 دفتر کل تراکنش‌ها (فقط مالک)</b><div class="admin-two"><input id="transactionUserId" inputmode="numeric" placeholder="فیلتر شناسه کاربر؛ اختیاری"><button class="admin-action secondary" onclick="loadAdminTransactions()">به‌روزرسانی</button></div><div id="adminTransactions" class="stack-list"></div></div>
+        <div class="admin-section"><b>🛡️ تشخیص رفتار غیرعادی</b><p class="helper">درخواست‌های پرتعداد، تغییرات سریع و ثبت غیرعادی نتایج بازی در این بخش علامت‌گذاری می‌شوند؛ تشخیص به‌تنهایی باعث مسدودسازی خودکار نمی‌شود.</p><div id="securityEventSummary" class="helper">—</div><button class="admin-action secondary" onclick="loadSecurityEvents()">بررسی گزارش‌ها</button><div id="securityEvents" class="stack-list"></div></div>
+        <div class="admin-section"><b>🪙 مدیریت موجودی کاربر</b><div class="admin-two"><input id="adjustUserId" inputmode="numeric" placeholder="شناسه کاربر"><input id="adjustAmount" type="number" placeholder="مقدار + یا -"></div><input id="adjustReason" placeholder="دلیل تغییر موجودی"><button class="admin-action" onclick="adminAdjustCoins()">ثبت تغییر سکه</button></div>
+        <div class="admin-section"><b>⛔ مسدودسازی / رفع مسدودی</b><input id="banUserId" inputmode="numeric" placeholder="شناسه کاربر"><div class="admin-two"><button class="admin-action danger" onclick="adminBan(true)">مسدودسازی</button><button class="admin-action" onclick="adminBan(false)">رفع مسدودی</button></div></div>
+        <div class="admin-section"><b>📢 پیام همگانی</b><textarea id="broadcastText" maxlength="3500" placeholder="متن پیام برای همه کاربران..."></textarea><button class="admin-action" onclick="adminBroadcast()">ارسال پیام همگانی</button></div>
+        <div class="admin-section"><b>🏆 ساخت تورنمنت</b><input id="tournamentName" placeholder="نام تورنمنت"><div class="admin-two"><input id="tournamentPrize" type="number" min="0" placeholder="جایزه سکه"><input id="tournamentCapacity" type="number" min="2" value="16" placeholder="ظرفیت"></div><select id="tournamentGame"><option value="math">ریاضی</option><option value="guess">حدس عدد</option><option value="memory">حافظه</option><option value="neon-breakout">NEON BREAKOUT</option></select><button class="admin-action" onclick="adminCreateTournament()">ایجاد تورنمنت</button><div id="adminTournaments" class="stack-list"></div></div>
+        <div class="admin-section"><b>⚙️ مدیریت بازی‌ها</b><div id="adminGameToggles" class="stack-list"></div><label class="helper">درجه سختی هوش مصنوعی دوز</label><select id="tttDifficulty"><option value="easy">آسان</option><option value="medium">متوسط</option><option value="hard">سخت</option></select><button class="admin-action" onclick="adminSaveTTTDifficulty()">ذخیره سختی دوز</button></div>
+        <div class="admin-section"><b>🏅 مدیریت آستانه لیگ‌ها</b><textarea id="leagueJson" rows="7" dir="ltr"></textarea><button class="admin-action" onclick="adminSaveLeagues()">ذخیره لیگ‌ها</button></div>
+        <div class="admin-section"><b>🔎 جست‌وجوی کاربران</b><input id="adminUserQuery" placeholder="شناسه، نام یا نام کاربری"><button class="admin-action" onclick="adminSearchUsers()">جست‌وجو</button><div id="adminUsers" class="stack-list"></div></div>
+        <div class="admin-section"><b>☑️ مدیریت تیک آبی</b><input id="verifyUserId" inputmode="numeric" placeholder="شناسه عددی کاربر"><div class="admin-two"><button class="admin-action" onclick="adminSetVerified(Number(document.getElementById('verifyUserId').value),true)">اعطای تیک آبی</button><button class="admin-action danger" onclick="adminSetVerified(Number(document.getElementById('verifyUserId').value),false)">حذف تیک آبی</button></div><p class="helper">نشان مالک برای حساب مدیر اصلی به‌صورت خودکار نمایش داده می‌شود و قابل حذف نیست.</p></div>
+        <div class="admin-section"><b>🔐 جویین اجباری کانال</b><label class="toggle-row"><span>فعال‌سازی عضویت اجباری</span><input id="forceJoinEnabled" type="checkbox"></label><input id="forceJoinTitle" maxlength="100" placeholder="نام نمایشی کانال"><input id="forceJoinChat" maxlength="100" placeholder="شناسه کانال: @channel یا -100..."><input id="forceJoinUrl" maxlength="120" placeholder="لینک عضویت: https://t.me/..."><p class="helper">برای بررسی خودکار عضویت، ربات باید در کانال ادمین باشد. مدیر اصلی از این محدودیت مستثناست.</p><div class="admin-two"><button class="admin-action secondary" onclick="adminTestForceJoin()">تست دسترسی ربات</button><button class="admin-action" onclick="adminSaveForceJoin()">ذخیره تنظیمات جویین اجباری</button></div></div>
+        <div class="admin-section"><b>⭐ مدیریت VIP</b><div class="admin-two"><input id="vipUserId" inputmode="numeric" placeholder="شناسه کاربر"><select id="vipTier"><option value="none">بدون VIP</option><option value="vip">VIP</option><option value="vip_plus">VIP+</option><option value="elite">ELITE</option><option value="legend">LEGEND</option></select></div><button class="admin-action" onclick="adminSetVip()">ثبت سطح VIP</button></div>
+        <div class="admin-section"><b>🎉 ساخت رویداد فصلی</b><input id="eventTitle" maxlength="100" placeholder="عنوان رویداد"><textarea id="eventDescription" maxlength="500" placeholder="توضیحات رویداد"></textarea><div class="admin-two"><input id="eventBonusXp" type="number" min="0" max="500" value="5" placeholder="XP اضافه برای هر بازی"><input id="eventDuration" type="number" min="1" max="2160" value="72" placeholder="مدت به ساعت"></div><button class="admin-action" onclick="adminCreateEvent()">ایجاد رویداد</button><div id="adminEvents" class="stack-list"></div></div>
+        <div class="admin-section"><b>🗓️ مدیریت فصل‌ها</b><input id="seasonAdminName" maxlength="100" placeholder="نام فصل جدید"><input id="seasonAdminDays" type="number" min="7" max="120" value="30" placeholder="مدت فصل به روز"><button class="admin-action" onclick="adminCreateSeason()">شروع فصل جدید</button><div id="adminSeasons" class="stack-list"></div></div>
+        <div class="admin-section"><b>🚩 بررسی گزارش بازیکنان</b><div id="adminReports" class="stack-list"></div></div>
+        <div class="admin-section"><b>📜 گزارش فعالیت مدیران</b><div id="adminAudit" class="stack-list"></div></div>
+        <button class="admin-action secondary" onclick="loadAdmin()">به‌روزرسانی آمار</button>
+      </div>
+    </section>
+
+    <nav class="bottom-nav">
+      <button class="active" data-tab="homeTab" onclick="switchTab('homeTab',this)"><span>🎮</span><small>بازی</small></button>
+      <button data-tab="competitionTab" onclick="switchTab('competitionTab',this)"><span>🏆</span><small>رقابت</small></button>
+      <button data-tab="shopTab" onclick="switchTab('shopTab',this)"><span>🎁</span><small>فروشگاه</small></button>
+      <button data-tab="profileTab" onclick="switchTab('profileTab',this)"><span>👤</span><small>پروفایل</small></button>
+    </nav>
+  </main>
+  <div id="modal" class="modal hidden"><div class="modal-sheet"><div class="modal-head"><div><span class="eyebrow">GAME SESSION</span><h2 id="modalTitle">بازی</h2></div><button class="close" onclick="closeModal()">✕</button></div><div id="gameArea"></div></div></div>
+  <div id="toast" class="toast"></div>
+  <script src="/static/app.js?v=3.0.0"></script>
+</body></html>
